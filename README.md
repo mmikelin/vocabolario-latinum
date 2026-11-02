@@ -1,6 +1,6 @@
 # Vocabolario Latinum
 
-Latin–Italian vocabulary from the course [*Grundlagen Latein Express*](https://www.sprachenzentrum.uzh.ch/de/Sprachkurse/Latein/Die-Lateinkurse-am-Sprachenzentrum/Grundlagen-Latein.html) (HS 2022), with a search page:
+Latin–Italian vocabulary from the course [*Grundlagen Latein Express*](https://www.sprachenzentrum.uzh.ch/de/Sprachkurse/Latein/Die-Lateinkurse-am-Sprachenzentrum/Grundlagen-Latein.html) (UZH, HS 2022), with a search page:
 
 **https://mmikelin.github.io/vocabolario-latinum/**
 
