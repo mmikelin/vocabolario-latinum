@@ -73,6 +73,8 @@
   }
   h1 em { color: var(--accent); }
   .sub { margin: 8px 0 0; color: var(--muted); font-size: 0.95rem; }
+  .sub a { color: inherit; text-underline-offset: 2px; }
+  .sub a:hover { color: var(--accent); }
 
   /* Tabs */
   .tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--line); margin-bottom: 20px; }
@@ -265,7 +267,7 @@
 <div class="wrap">
   <header class="masthead">
     <h1>Vocabolario <em>Latinum</em></h1>
-    <p class="sub" id="stats">Latino – italiano · Grundlagen Latein Express, HS 2022</p>
+    <p class="sub">Latino – italiano<span id="stats"></span> · <a href="https://www.sprachenzentrum.uzh.ch/de/Sprachkurse/Latein/Die-Lateinkurse-am-Sprachenzentrum/Grundlagen-Latein.html">Grundlagen Latein Express</a>, HS 2022</p>
   </header>
 
   <div class="tabs" role="tablist" aria-label="Modalità">
@@ -639,7 +641,7 @@
         longest = Math.max(longest, key.split(' ').length);
       }
     }
-    $('stats').textContent = `Latino – italiano · ${entries.length} voci · Grundlagen Latein Express, HS 2022`;
+    $('stats').textContent = ` · ${entries.length} voci`;
 
     loadUrl();
     renderSearch();
