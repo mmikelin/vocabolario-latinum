@@ -1,0 +1,688 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Vocabolario Latinum</title>
+<meta name="description" content="Vocabolario latino–italiano del corso Grundlagen Latein Express (HS 2022): cerca parole latine o italiane e analizza un testo latino.">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='7' fill='%239a2f1f'/%3E%3Ctext x='16' y='23' font-family='Georgia,serif' font-size='20' font-style='italic' text-anchor='middle' fill='%23fffdf9'%3EV%3C/text%3E%3C/svg%3E">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400;1,500&display=swap">
+<style>
+  :root {
+    --bg: #f7f3ec;
+    --surface: #fffdf9;
+    --ink: #1f1a14;
+    --muted: #6b6257;
+    --line: #e2d9cb;
+    --accent: #9a2f1f;
+    --accent-soft: #f4e3dc;
+    --mark: #f7df8f;
+    --serif: "EB Garamond", Georgia, "Times New Roman", serif;
+    --sans: system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", sans-serif;
+    color-scheme: light;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #15130f;
+      --surface: #1e1b16;
+      --ink: #ede6da;
+      --muted: #a69b8c;
+      --line: #35302a;
+      --accent: #e3907a;
+      --accent-soft: #3b2620;
+      --mark: #6e5617;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #15130f;
+    --surface: #1e1b16;
+    --ink: #ede6da;
+    --muted: #a69b8c;
+    --line: #35302a;
+    --accent: #e3907a;
+    --accent-soft: #3b2620;
+    --mark: #6e5617;
+    color-scheme: dark;
+  }
+
+  *, *::before, *::after { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--ink);
+    font: 16px/1.5 var(--sans);
+  }
+  .wrap { max-width: 760px; margin: 0 auto; padding: 0 16px 48px; }
+  button, input, select, textarea { font: inherit; color: inherit; }
+  :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  /* Masthead */
+  .masthead { padding: 44px 0 18px; }
+  h1 {
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: clamp(2.1rem, 7vw, 2.9rem);
+    line-height: 1.05;
+    letter-spacing: 0.01em;
+    margin: 0;
+  }
+  h1 em { color: var(--accent); }
+  .sub { margin: 8px 0 0; color: var(--muted); font-size: 0.95rem; }
+
+  /* Tabs */
+  .tabs { display: flex; gap: 4px; border-bottom: 1px solid var(--line); margin-bottom: 20px; }
+  .tabs button {
+    appearance: none;
+    background: none;
+    border: 0;
+    border-bottom: 2px solid transparent;
+    margin-bottom: -1px;
+    padding: 10px 12px;
+    font-weight: 500;
+    color: var(--muted);
+    cursor: pointer;
+  }
+  .tabs button:hover { color: var(--ink); }
+  .tabs button[aria-selected="true"] { color: var(--ink); border-bottom-color: var(--accent); }
+
+  /* Search bar */
+  .searchbar { position: relative; }
+  .searchbar svg {
+    position: absolute; left: 15px; top: 50%; transform: translateY(-50%);
+    color: var(--muted); pointer-events: none;
+  }
+  #q {
+    width: 100%;
+    font-size: 1.125rem;
+    padding: 14px 48px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: var(--surface);
+    -webkit-appearance: none;
+    appearance: none;
+  }
+  #q::placeholder, textarea::placeholder { color: var(--muted); opacity: 0.8; }
+  #q:focus { outline: 2px solid var(--accent); outline-offset: 0; border-color: transparent; }
+  .searchbar kbd {
+    position: absolute; right: 14px; top: 50%; transform: translateY(-50%);
+    font: 500 0.75rem var(--sans);
+    color: var(--muted);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 1px 7px;
+    pointer-events: none;
+  }
+  #q:focus + kbd, #q:not(:placeholder-shown) + kbd { display: none; }
+  @media (hover: none) { .searchbar kbd { display: none; } }
+
+  /* Filters */
+  .filters { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin: 12px 0 0; }
+  .seg {
+    display: inline-flex;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 3px;
+    background: var(--surface);
+    margin: 0;
+  }
+  .seg legend { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+  .seg label { position: relative; }
+  .seg input { position: absolute; opacity: 0; inset: 0; margin: 0; cursor: pointer; }
+  .seg span { display: block; padding: 5px 12px; border-radius: 7px; font-size: 0.9rem; color: var(--muted); }
+  .seg input:checked + span { background: var(--accent-soft); color: var(--accent); font-weight: 600; }
+  .seg input:focus-visible + span { outline: 2px solid var(--accent); }
+  select {
+    font-size: 0.9rem;
+    padding: 7px 10px;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    background: var(--surface);
+    max-width: 100%;
+  }
+
+  .count { color: var(--muted); font-size: 0.875rem; margin: 16px 0 12px; min-height: 1.3em; }
+
+  /* Entries */
+  .entry {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 14px 16px 15px;
+    margin-bottom: 10px;
+  }
+  .entry-head { display: flex; align-items: baseline; justify-content: space-between; gap: 12px; }
+  .term {
+    font-family: var(--serif);
+    font-size: 1.5rem;
+    font-weight: 600;
+    line-height: 1.2;
+    margin: 0;
+    white-space: pre-line;
+    overflow-wrap: anywhere;
+  }
+  .tags { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 6px; flex-shrink: 0; }
+  .badge {
+    font-size: 0.75rem;
+    padding: 2px 9px;
+    border-radius: 999px;
+    border: 1px solid var(--line);
+    background: none;
+    color: var(--muted);
+    cursor: pointer;
+    white-space: nowrap;
+  }
+  .badge:hover { color: var(--accent); border-color: var(--accent); }
+  .times {
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 2px 9px;
+    border-radius: 999px;
+    background: var(--accent-soft);
+    color: var(--accent);
+    white-space: nowrap;
+  }
+  .gram {
+    margin: 4px 0 0;
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 1.1rem;
+    color: var(--muted);
+    white-space: pre-line;
+  }
+  .mean { margin: 8px 0 0; white-space: pre-line; overflow-wrap: anywhere; }
+  mark { background: var(--mark); color: inherit; border-radius: 2px; padding: 0 1px; }
+
+  .entry.missing { background: transparent; border-style: dashed; }
+  .entry.missing .mean { color: var(--muted); }
+
+  .group-title {
+    display: flex; justify-content: space-between; align-items: baseline; gap: 12px;
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: 1.4rem;
+    margin: 32px 0 12px;
+    padding-bottom: 4px;
+    border-bottom: 1px solid var(--line);
+  }
+  .group-title:first-child { margin-top: 4px; }
+  .group-title small { font: 0.8rem var(--sans); color: var(--muted); }
+
+  .empty { color: var(--muted); padding: 24px 0; }
+
+  /* Buttons */
+  .btn {
+    appearance: none;
+    border: 1px solid var(--line);
+    background: var(--surface);
+    border-radius: 10px;
+    padding: 8px 14px;
+    font-size: 0.9rem;
+    font-weight: 500;
+    cursor: pointer;
+  }
+  .btn:hover { border-color: var(--accent); color: var(--accent); }
+  .btn:disabled { opacity: 0.5; cursor: default; border-color: var(--line); color: inherit; }
+  #more { display: block; margin: 16px auto 0; }
+
+  /* Text analysis */
+  .hint { margin: 0 0 12px; color: var(--muted); }
+  textarea {
+    width: 100%;
+    min-height: 140px;
+    font-family: var(--serif);
+    font-size: 1.2rem;
+    line-height: 1.45;
+    padding: 12px 14px;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: var(--surface);
+    resize: vertical;
+  }
+  textarea:focus { outline: 2px solid var(--accent); outline-offset: 0; border-color: transparent; }
+  .actions { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 10px; margin-top: 10px; }
+  .check { display: inline-flex; align-items: center; gap: 8px; font-size: 0.9rem; color: var(--muted); cursor: pointer; }
+  .check input { accent-color: var(--accent); width: 16px; height: 16px; margin: 0; }
+
+  footer { margin-top: 56px; padding-top: 16px; border-top: 1px solid var(--line); color: var(--muted); font-size: 0.85rem; }
+  footer p { margin: 0 0 4px; }
+  footer a { color: inherit; }
+
+  @media (max-width: 480px) {
+    .masthead { padding-top: 28px; }
+    .entry { padding: 12px 14px 13px; }
+    .term { font-size: 1.35rem; }
+    .filters { gap: 8px; }
+    .seg span { padding: 5px 10px; }
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="masthead">
+    <h1>Vocabolario <em>Latinum</em></h1>
+    <p class="sub" id="stats">Latino – italiano · Grundlagen Latein Express, HS 2022</p>
+  </header>
+
+  <div class="tabs" role="tablist" aria-label="Modalità">
+    <button type="button" role="tab" id="tab-cerca" aria-controls="panel-cerca" aria-selected="true">Cerca</button>
+    <button type="button" role="tab" id="tab-testo" aria-controls="panel-testo" aria-selected="false" tabindex="-1">Analizza un testo</button>
+  </div>
+
+  <section id="panel-cerca" role="tabpanel" aria-labelledby="tab-cerca">
+    <div class="searchbar">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="11" cy="11" r="7"/><path d="m20 20-3.5-3.5"/></svg>
+      <input id="q" type="search" autocomplete="off" autocapitalize="off" spellcheck="false"
+             placeholder="amīcus, portare, res publica…" aria-label="Cerca una parola latina o italiana">
+      <kbd>/</kbd>
+    </div>
+    <div class="filters">
+      <fieldset class="seg">
+        <legend>Cerca in</legend>
+        <label><input type="radio" name="scope" value="" checked><span>Tutto</span></label>
+        <label><input type="radio" name="scope" value="la"><span>Latino</span></label>
+        <label><input type="radio" name="scope" value="it"><span>Italiano</span></label>
+      </fieldset>
+      <select id="lesson" aria-label="Lezione">
+        <option value="">Tutte le lezioni</option>
+      </select>
+    </div>
+    <p class="count" id="count" aria-live="polite"></p>
+    <div id="results"></div>
+    <button type="button" class="btn" id="more" hidden>Mostra altri</button>
+  </section>
+
+  <section id="panel-testo" role="tabpanel" aria-labelledby="tab-testo" hidden>
+    <p class="hint">Incolla un testo latino: ogni parola – ed espressioni come <i>rēs pūblica</i> – viene cercata nel vocabolario, con il numero di occorrenze.</p>
+    <textarea id="text" spellcheck="false" aria-label="Testo latino"
+              placeholder="Heus tū! Prōmittis ad cēnam, nec venīs?"></textarea>
+    <div class="actions">
+      <label class="check"><input type="checkbox" id="with-lesson" checked> Copia con lezione e conteggio</label>
+      <button type="button" class="btn" id="copy" disabled>Copia elenco</button>
+    </div>
+    <p class="count" id="summary" aria-live="polite"></p>
+    <div id="analysis"></div>
+  </section>
+
+  <footer>
+    <p>Appunti personali del corso: possono contenere errori.</p>
+    <p>Maiuscole, macron (ā, ē, ī…) e trattini non contano: <i>amicus</i> trova <i>amīcus</i>, <i>sustinere</i> trova <i>sus-tinēre</i>.</p>
+    <p><a href="https://github.com/mmikelin/vocabolario-latinum">Codice e dati su GitHub</a></p>
+  </footer>
+</div>
+
+<script>
+(() => {
+  'use strict';
+
+  const $ = id => document.getElementById(id);
+  const PAGE = 100;
+  const SEPARATOR = '—'.repeat(12);
+
+  let entries = [];
+  const lessons = new Map();  // id → { label, short }
+  const byKey = new Map();    // normalized key → every entry it can stand for
+  let longest = 1;            // words in the longest key
+  let limit = PAGE;
+  let analysis = null;
+
+  const stripMarks = s => s.normalize('NFKD').replace(/\p{M}/gu, '');
+
+  // Same rules as normalize() in vocabolario_latinum.py: lowercase, no macrons,
+  // no punctuation or hyphens, and "neque ... neque ..." → "neque"
+  function normalize(s) {
+    const words = stripMarks(s.toLowerCase()).replace(/[^\p{L}\p{N}_\s]/gu, '').split(/\s+/).filter(Boolean);
+    return words.filter((w, i) => i === 0 || w !== words[i - 1]).join(' ');
+  }
+
+  // For Italian definitions punctuation separates words: "verso/presso" → "verso presso"
+  const fold = s => stripMarks(s.toLowerCase()).replace(/[^\p{L}\p{N}]+/gu, ' ').trim();
+
+  function el(tag, className, text) {
+    const node = document.createElement(tag);
+    if (className) node.className = className;
+    if (text != null) node.textContent = text;
+    return node;
+  }
+
+  // Writes text into node, marking what matches q (a normalized query) regardless of macrons, case and punctuation
+  function write(node, text, q) {
+    if (!q) { node.textContent = text; return; }
+    let folded = '';
+    const at = [];
+    for (let i = 0; i < text.length; i++) {
+      for (const c of stripMarks(text[i].toLowerCase()).replace(/[^\p{L}\p{N}_\s]/gu, '')) {
+        folded += c;
+        at.push(i);
+      }
+    }
+    let from = 0;
+    for (let pos = folded.indexOf(q); pos !== -1; pos = folded.indexOf(q, pos + q.length)) {
+      const start = at[pos], end = at[pos + q.length - 1] + 1;
+      node.append(text.slice(from, start), el('mark', null, text.slice(start, end)));
+      from = end;
+    }
+    node.append(text.slice(from));
+  }
+
+  // The first paragraph of a definition is usually grammar ("amicī m.", "videō, vīdī, vīsum")
+  function splitDefinition(def) {
+    const parts = def.split(/\n[ \t]*\n/);
+    return parts.length > 1 ? [parts[0], parts.slice(1).join('\n\n')] : ['', def];
+  }
+
+  function card(e, { termQuery = '', defQuery = '', times = 0 } = {}) {
+    const article = el('article', 'entry');
+    const head = el('div', 'entry-head');
+    // no lang="la" on terms: EB Garamond then draws "u" as "v"
+    const term = el('h3', 'term');
+    write(term, e.term, termQuery);
+    const tags = el('div', 'tags');
+    if (times) tags.append(el('span', 'times', `×${times}`));
+    for (const id of e.lessons) {
+      const badge = el('button', 'badge', lessons.get(id).short);
+      badge.type = 'button';
+      badge.dataset.lesson = id;
+      badge.title = `Mostra ${lessons.get(id).label}`;
+      tags.append(badge);
+    }
+    head.append(term, tags);
+    article.append(head);
+
+    const [gram, meaning] = splitDefinition(e.def);
+    if (gram) {
+      const p = el('p', 'gram');
+      write(p, gram, defQuery);
+      article.append(p);
+    }
+    const p = el('p', 'mean');
+    write(p, meaning, defQuery);
+    article.append(p);
+    return article;
+  }
+
+  /* ---------- Cerca ---------- */
+
+  const scope = () => document.querySelector('input[name="scope"]:checked').value;
+
+  function search(query, where, lesson) {
+    const la = normalize(query), it = fold(query);
+    const hits = [];
+    entries.forEach((e, i) => {
+      if (lesson && !e.lessons.includes(lesson)) return;
+      let score = 0;
+      if (where !== 'it' && la) {
+        for (const k of e.keys) {
+          if (k === la) score = Math.max(score, 4);
+          else if (k.startsWith(la)) score = Math.max(score, 3);
+          else if ((' ' + k).includes(' ' + la)) score = Math.max(score, 2);
+          else if (la.length > 1 && k.includes(la)) score = Math.max(score, 1.5);
+        }
+      }
+      if (where !== 'la' && it && score < 1) {
+        if (e.folded.includes(` ${it} `)) score = 1;
+        else if (e.folded.includes(` ${it}`)) score = 0.8;
+        else if (it.length > 2 && e.folded.includes(it)) score = 0.5;
+      }
+      if (score) hits.push({ e, score, i });
+    });
+    return hits.sort((a, b) => b.score - a.score || a.i - b.i).map(h => h.e);
+  }
+
+  function renderSearch() {
+    const query = $('q').value;
+    const where = scope();
+    const lesson = $('lesson').value;
+    const results = $('results');
+    const frag = document.createDocumentFragment();
+    $('more').hidden = true;
+
+    if (!normalize(query)) {
+      // Nothing to search: list the vocabulary lesson by lesson
+      let total = 0;
+      for (const [id, info] of lessons) {
+        if (lesson && id !== lesson) continue;
+        const list = entries.filter(e => e.lessons.includes(id));
+        total += list.length;
+        const title = el('h2', 'group-title', info.label);
+        title.append(el('small', null, `${list.length} voci`));
+        frag.append(title, ...list.map(e => card(e)));
+      }
+      $('count').textContent = lesson ? '' : `${total} voci in ${lessons.size} lezioni`;
+      results.replaceChildren(frag);
+      return;
+    }
+
+    const hits = search(query, where, lesson);
+    const q = normalize(query);
+    const shown = hits.slice(0, limit);
+    for (const e of shown) {
+      frag.append(card(e, { termQuery: where === 'it' ? '' : q, defQuery: where === 'la' ? '' : q }));
+    }
+    if (hits.length) {
+      $('count').textContent = hits.length === 1 ? '1 risultato' : `${hits.length} risultati`;
+    } else {
+      $('count').textContent = '';
+      const empty = el('p', 'empty', `Nessun risultato per «${query.trim()}»`);
+      if (where || lesson) empty.append(' con questi filtri.');
+      frag.append(empty);
+    }
+    if (hits.length > shown.length) {
+      $('more').hidden = false;
+      $('more').textContent = `Mostra altri (${hits.length - shown.length})`;
+    }
+    results.replaceChildren(frag);
+  }
+
+  /* ---------- Analizza un testo (like the command-line script) ---------- */
+
+  function analyze(text) {
+    const words = text.split(/[\s,]+/).map(raw => [raw, normalize(raw)]).filter(([, norm]) => norm);
+
+    // Longest match first, so "res publica" finds "rēs pūblica" rather than "rēs" + "pūblica"
+    const phrases = [];
+    let i = 0;
+    while (i < words.length) {
+      for (let j = Math.min(words.length, i + longest); j > i; j--) {
+        const phrase = words.slice(i, j).map(([, norm]) => norm).join(' ');
+        if (byKey.has(phrase) || j === i + 1) {
+          phrases.push([words.slice(i, j).map(([raw]) => raw).join(' '), phrase]);
+          i = j;
+          break;
+        }
+      }
+    }
+
+    const counter = new Map();
+    for (const [, phrase] of phrases) counter.set(phrase, (counter.get(phrase) || 0) + 1);
+    // each phrase once, in the order typed
+    const firstTyped = new Map();
+    for (const [raw, phrase] of phrases) if (!firstTyped.has(phrase)) firstTyped.set(phrase, raw);
+
+    return {
+      total: words.length,
+      items: [...firstTyped].map(([phrase, raw]) => ({ raw, count: counter.get(phrase), entries: byKey.get(phrase) || [] })),
+    };
+  }
+
+  // Same format as the script prints, ready to paste into a vocabulary file
+  function exportText({ total, items }, withLesson) {
+    const out = [];
+    for (const { raw, count, entries: found } of items) {
+      if (!found.length) {
+        out.push(`No match for: ${raw}\n—\n+++ Please, insert manually. +++\n\nCounter: ${count}\n${SEPARATOR}`);
+      }
+      for (const e of found) {
+        out.push(withLesson
+          ? `${e.term}\n—\n${e.def}\n\nCounter: ${count} | [${e.lessons.join(', ')}]\n${SEPARATOR}`
+          : `${e.term}\n—\n${e.def}\n${SEPARATOR}`);
+      }
+    }
+    out.push(`Processed items: ${total}`);
+    return out.join('\n');
+  }
+
+  function renderAnalysis() {
+    analysis = analyze($('text').value);
+    const frag = document.createDocumentFragment();
+    let missing = 0;
+    for (const { raw, count, entries: found } of analysis.items) {
+      if (found.length) {
+        for (const e of found) frag.append(card(e, { times: count }));
+        continue;
+      }
+      missing++;
+      const article = el('article', 'entry missing');
+      const head = el('div', 'entry-head');
+      const term = el('h3', 'term', raw);
+      const tags = el('div', 'tags');
+      if (count > 1) tags.append(el('span', 'times', `×${count}`));
+      head.append(term, tags);
+      article.append(head, el('p', 'mean', 'Non trovata nel vocabolario.'));
+      frag.append(article);
+    }
+    $('analysis').replaceChildren(frag);
+    $('copy').disabled = !analysis.total;
+    $('summary').textContent = analysis.total
+      ? `${analysis.total} ${analysis.total === 1 ? 'parola' : 'parole'} · ${analysis.items.length - missing} trovate · ${missing} non trovate`
+      : '';
+  }
+
+  async function copyAnalysis() {
+    const text = exportText(analysis, $('with-lesson').checked);
+    try {
+      await navigator.clipboard.writeText(text);
+    } catch {
+      const area = el('textarea');
+      area.value = text;
+      document.body.append(area);
+      area.select();
+      document.execCommand('copy');
+      area.remove();
+    }
+    $('copy').textContent = 'Copiato ✓';
+    setTimeout(() => { $('copy').textContent = 'Copia elenco'; }, 1500);
+  }
+
+  /* ---------- Tabs and URL ---------- */
+
+  function currentTab() {
+    return $('tab-testo').getAttribute('aria-selected') === 'true' ? 'testo' : 'cerca';
+  }
+
+  function selectTab(name, focus) {
+    for (const t of ['cerca', 'testo']) {
+      const on = t === name;
+      $(`tab-${t}`).setAttribute('aria-selected', on);
+      $(`tab-${t}`).tabIndex = on ? 0 : -1;
+      $(`panel-${t}`).hidden = !on;
+    }
+    if (focus) $(`tab-${name}`).focus();
+    saveUrl();
+  }
+
+  function saveUrl() {
+    const params = new URLSearchParams();
+    if (currentTab() === 'testo') {
+      params.set('tab', 'testo');
+    } else {
+      if ($('q').value.trim()) params.set('q', $('q').value.trim());
+      if (scope()) params.set('in', scope());
+      if ($('lesson').value) params.set('l', $('lesson').value);
+    }
+    const qs = params.toString();
+    history.replaceState(null, '', qs ? `?${qs}` : location.pathname);
+  }
+
+  function loadUrl() {
+    const params = new URLSearchParams(location.search);
+    $('q').value = params.get('q') || '';
+    const where = document.querySelector(`input[name="scope"][value="${params.get('in') === 'la' || params.get('in') === 'it' ? params.get('in') : ''}"]`);
+    where.checked = true;
+    if (lessons.has(params.get('l'))) $('lesson').value = params.get('l');
+    if (params.get('tab') === 'testo') selectTab('testo');
+  }
+
+  function onSearchChange() {
+    limit = PAGE;
+    renderSearch();
+    saveUrl();
+  }
+
+  /* ---------- Start ---------- */
+
+  async function start() {
+    let data;
+    try {
+      const response = await fetch('vocabolario.json');
+      if (!response.ok) throw new Error(response.status);
+      data = await response.json();
+    } catch {
+      $('results').replaceChildren(el('p', 'empty', 'Impossibile caricare il vocabolario (vocabolario.json).'));
+      return;
+    }
+
+    for (const l of data.lessons) {
+      lessons.set(l.id, l);
+      $('lesson').append(new Option(l.label, l.id));
+    }
+    entries = data.entries;
+    for (const e of entries) {
+      e.folded = ` ${fold(e.def)} `;
+      for (const key of e.keys) {
+        if (!byKey.has(key)) byKey.set(key, []);
+        byKey.get(key).push(e);
+        longest = Math.max(longest, key.split(' ').length);
+      }
+    }
+    $('stats').textContent = `Latino – italiano · ${entries.length} voci · Grundlagen Latein Express, HS 2022`;
+
+    loadUrl();
+    renderSearch();
+
+    $('q').addEventListener('input', onSearchChange);
+    $('q').addEventListener('keydown', ev => { if (ev.key === 'Escape' && $('q').value) { $('q').value = ''; onSearchChange(); } });
+    for (const radio of document.querySelectorAll('input[name="scope"]')) radio.addEventListener('change', onSearchChange);
+    $('lesson').addEventListener('change', onSearchChange);
+    $('more').addEventListener('click', () => { limit += PAGE; renderSearch(); });
+
+    // Lesson badges: show that lesson
+    document.addEventListener('click', ev => {
+      const badge = ev.target.closest('.badge');
+      if (!badge) return;
+      $('q').value = '';
+      $('lesson').value = badge.dataset.lesson;
+      if (currentTab() !== 'cerca') selectTab('cerca');
+      onSearchChange();
+      window.scrollTo({ top: 0 });
+    });
+
+    let timer;
+    $('text').addEventListener('input', () => { clearTimeout(timer); timer = setTimeout(renderAnalysis, 150); });
+    $('copy').addEventListener('click', copyAnalysis);
+
+    for (const t of ['cerca', 'testo']) {
+      $(`tab-${t}`).addEventListener('click', () => selectTab(t));
+      $(`tab-${t}`).addEventListener('keydown', ev => {
+        if (ev.key === 'ArrowLeft' || ev.key === 'ArrowRight') selectTab(t === 'cerca' ? 'testo' : 'cerca', true);
+      });
+    }
+
+    // "/" jumps to the search field
+    document.addEventListener('keydown', ev => {
+      if (ev.key !== '/' || ev.metaKey || ev.ctrlKey || ev.target.closest('input, textarea, select')) return;
+      ev.preventDefault();
+      if (currentTab() !== 'cerca') selectTab('cerca');
+      $('q').focus();
+      $('q').select();
+    });
+  }
+
+  start();
+})();
+</script>
+</body>
+</html>

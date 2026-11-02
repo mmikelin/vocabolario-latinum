@@ -1,0 +1,8 @@
+.DS_Store
+__pycache__/
+_site/
+.claude/
+
+# old version and scratch file
+vocabolario_latinum_orig.py
+new_list.txt
