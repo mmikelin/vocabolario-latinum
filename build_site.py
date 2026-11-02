@@ -10,7 +10,9 @@ import re
 import shutil
 import sys
 
-from vocabolario_latinum import path, read_text_file, keys_for
+from vocabolario_latinum import read_vocabulary, keys_for
+
+root = os.path.dirname(os.path.abspath(__file__))
 
 # (long label, short label) for files that are not a numbered lesson
 labels = {
@@ -29,13 +31,8 @@ def lesson_labels(lesson):
 
 
 def main():
-    out = sys.argv[1] if len(sys.argv) > 1 else os.path.join(path, '_site')
-
-    # (term, definition) → lessons it appears in
-    entries = {}
-    for file in sorted(os.listdir(path)):
-        if file.endswith('.txt'):
-            read_text_file(os.path.join(path, file), os.path.splitext(file)[0], entries)
+    out = sys.argv[1] if len(sys.argv) > 1 else os.path.join(root, '_site')
+    entries = read_vocabulary()
 
     # lessons in file order, leaving out empty files
     lessons = []
@@ -53,7 +50,7 @@ def main():
     }
 
     os.makedirs(out, exist_ok=True)
-    shutil.copy(os.path.join(path, 'web', 'index.html'), out)
+    shutil.copy(os.path.join(root, 'web', 'index.html'), out)
     with open(os.path.join(out, 'vocabolario.json'), 'w', encoding='utf-8') as f:
         json.dump(data, f, ensure_ascii=False, separators=(',', ':'))
     print(f"{len(data['entries'])} entries from {len(lessons)} files → {out}")

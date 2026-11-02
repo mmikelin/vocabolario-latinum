@@ -23,7 +23,8 @@ Type one or more words, or paste a sentence; `q` quits. No packages needed.
 
 ## Data
 
-Each `L_NN.txt` is one lesson; `composti_*.txt` are compound verbs. Entries look like this:
+The vocabulary is in [`data/`](data): each `L_NN.txt` is one lesson, `composti_*.txt` are compound verbs.
+A new `.txt` file there becomes a new lesson. Entries look like this:
 
 ```
 amīcus

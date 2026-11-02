@@ -6,8 +6,8 @@ import re
 import unicodedata
 from collections import Counter
 
-# The vocabulary files sit next to this script
-path = os.path.dirname(os.path.abspath(__file__))
+# The vocabulary files are in the data folder next to this script
+data_path = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'data')
 
 separator = '—' * 12
 
@@ -66,6 +66,15 @@ def read_text_file(file_path, lesson, entries):
             entries.setdefault((term, definition), []).append(lesson)
 
 
+def read_vocabulary():
+    # (term, definition) → lessons it appears in, one lesson per file
+    entries = {}
+    for file in sorted(os.listdir(data_path)):
+        if file.endswith('.txt'):
+            read_text_file(os.path.join(data_path, file), os.path.splitext(file)[0], entries)
+    return entries
+
+
 def split_phrases(words, index, longest):
     # Longest match first, so "res publica" finds "rēs pūblica" rather than "rēs" + "pūblica"
     phrases = []
@@ -81,11 +90,7 @@ def split_phrases(words, index, longest):
 
 
 def main():
-    # (term, definition) → lessons it appears in
-    entries = {}
-    for file in sorted(os.listdir(path)):
-        if file.endswith(".txt"):
-            read_text_file(os.path.join(path, file), os.path.splitext(file)[0], entries)
+    entries = read_vocabulary()
 
     # normalized key → every entry it can stand for ("hic" → hīc and hic)
     index = {}
