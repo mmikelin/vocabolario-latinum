@@ -41,7 +41,7 @@ scīre
 —
 sciō, scīvī, scītum
 
-1. conoscere, sapere 
+1. conoscere, sapere
 2. capire
 ————————————
 nescīre
@@ -210,7 +210,7 @@ nimis
 
 troppo, eccessivamente
 
-[»nimis saepe« = 'troppo spesso'] 
+[»nimis saepe« = 'troppo spesso']
 ————————————
 com-movēre
 —
@@ -244,7 +244,7 @@ proficīscī
 —
 proficīscor, profectus sum
 
-1. mettersi in marcia/cammino, andarsene, partire/salpare 
+1. mettersi in marcia/cammino, andarsene, partire/salpare
 2. cominciare
 (3. avanzare)
 ————————————
